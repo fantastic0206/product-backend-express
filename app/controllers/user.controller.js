@@ -96,6 +96,7 @@ exports.profileUpdate = (req, res) => {
   const phonenumber = req.body.phonenumber;
 
   User.findById(userId, (err, user) => {
+    // password match
     bcrypt.compare(oldPassword, user.password, (err, isMatch) => {
       if (err) return err;
       if (isMatch) {
@@ -109,12 +110,13 @@ exports.profileUpdate = (req, res) => {
             phonenumber: phonenumber,
           };
 
+          // password hash
           bcrypt.genSalt(10, (err, salt) => {
             if (err) return err;
             bcrypt.hash(userData.password, salt, (err, hash) => {
               if (err) return err;
               userData.password = hash;
-              console.log(userData);
+              
               User.findByIdAndUpdate(userId, userData, (err) => {
                 if (err) res.json({ error: "email is existed already" });
                 else res.json({ success: "success" });

@@ -3,9 +3,11 @@ const Product = require("./../models/product.model");
 //---------------------------------------- PRODUCT GET ALL START -------------------------------------------//
 
 exports.getAll = (req, res) => {
+  // product find
   Product.find({}, (err, products) => {
     let product = [];
     products.forEach((data) => {
+      // product favourite set
       data.favourite = false;
       data.favourites.forEach((item) => {
         if (item == req.authorId) {
@@ -24,7 +26,7 @@ exports.getAll = (req, res) => {
 
 exports.searchAll = (req, res) => {
   const searchTxt = req.body.searchtext;
-  console.log(req.body);
+  
   if (searchTxt == "") {
     Product.find({}, (err, products) => {
       if (err) throw err;
@@ -37,6 +39,7 @@ exports.searchAll = (req, res) => {
         products.forEach((data) => {
           if (data.favourites.length != 0) {
             data.favourites.forEach((item) => {
+              // product favourite set
               if (item == req.authorId) {
                 data.favourite = true;
               } else data.favourite = false;
@@ -63,6 +66,7 @@ exports.updateFavourite = (req, res) => {
   Product.findById(productId, (err, products) => {
     if (err) throw err;
 
+    // product favourites data by user
     const index = products.favourites.indexOf(authorId);
     if (index > -1) {
       products.favourites.splice(index, 1);
@@ -74,6 +78,7 @@ exports.updateFavourite = (req, res) => {
       favourites: products.favourites,
     };
 
+    // product favourite data update
     Product.findByIdAndUpdate(productId, updateData, (err) => {
       if (err) throw err;
       else res.json({ success: "success" });
@@ -112,6 +117,7 @@ exports.getSearchFavourites = (req, res) => {
     let product = [];
     products.forEach((data) => {
       data.favourites.forEach((item) => {
+        // product favourite set
         if (item == req.authorId) {
           data.favourite = true;
           product.push(data);
